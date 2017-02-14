@@ -1,0 +1,7 @@
+import _inout.*;
+
+public class source{
+	public static void main(){
+		inout matr = new inout(7,7);
+	}
+}
