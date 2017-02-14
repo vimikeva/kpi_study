@@ -1,0 +1,269 @@
+Turbo Assembler	 Version 2.02	     06/13/16 15:45:19	    Page 1
+lab8.ASM
+
+
+
+      1					 .386
+      2					 scale	 macro	 p1
+      3						 fld		 max_&p1
+      4						 fsub	 min_&p1
+      5						 fild	 max_crt_&p1
+      6						 fdivp	 st(1),	st(0)
+      7						 fstp	 scale_&p1
+      8						 endm
+      9
+     10	    0000			 _data	 segment use16
+     11	    0000  C009999999999999		 min_x	 dq	 -3.2
+     12	    0008  4009999999999999		 max_x	 dq	 3.2
+     13	    0010  0140				 max_crt_x	 dw	 320
+     14	    0012  ????				 crt_x	 dw	 ?
+     15	    0014  ????????????????		 scale_x dq	 ?
+     16
+     17	    001C  BFD9999999999999		 min_y	 dq	 -0.4
+     18	    0024  4014000000000000		 max_y	 dq	 5.0
+     19	    002C  00C8				 max_crt_y	 dw	 200
+     20	    002E  ????				 crt_y	 dw	 ?
+     21	    0030  ????????????????		 scale_y dq	 ?
+     22
+     23	    0038  3F50624DD2F1A9FC		 step	 dq	 0.001
+     24	    0040  ????				 tmp	 dw	 ?
+     25	    0042  2B				 color_axis	 db 2bh
+     26	    0043  3B				 color_plot	 db 3bh
+     27	    0044  00000001			 value dd 1h
+     28	    0048			 _data	 ends
+     29
+     30	    0000			 _code	 segment use16
+     31						 assume	 cs:_code, ds:_data
+     32	    0000			 @main:
+     33	    0000  B8 0000s			 mov	 ax, _data
+     34	    0003  8E D8				 mov	 ds, ax
+     35
+     36	    0005  B8 0013			 mov	 ax, 13h
+     37	    0008  CD 10				 int	 10h
+     38
+     39	    000A  9B DB	E3			 finit
+     40						 scale	 x
+1    41	    000D  DD 06	0008r			 fld		 max_x
+1    42	    0011  DC 26	0000r			 fsub	 min_x
+1    43	    0015  DF 06	0010r			 fild	 max_crt_x
+1    44	    0019  DE F9				 fdivp	 st(1),	st(0)
+1    45	    001B  DD 1E	0014r			 fstp	 scale_x
+     46						 scale	 y
+1    47	    001F  DD 06	0024r			 fld		 max_y
+1    48	    0023  DC 26	001Cr			 fsub	 min_y
+1    49	    0027  DF 06	002Cr			 fild	 max_crt_y
+1    50	    002B  DE F9				 fdivp	 st(1),	st(0)
+1    51	    002D  DD 1E	0030r			 fstp	 scale_y
+     52
+     53	    0031  E8 00A0			 call	 draw_axis
+     54	    0034  E8 001B			 call	 draw_plot
+     55
+     56	    0037  B4 08				 mov	 ah, 8
+     57	    0039  CD 21				 int	 21h
+Turbo Assembler	 Version 2.02	     06/13/16 15:45:19	    Page 2
+lab8.ASM
+
+
+
+     58	    003B  B8 0003			 mov	 ax, 3
+     59	    003E  CD 10				 int	 10h
+     60	    0040  B8 4C00			 mov	 ax, 4C00h
+     61	    0043  CD 21				 int	 21h
+     62
+     63	    0045			 func	 proc
+     64	    0045  D9 C0				 fld st(0)
+     65	    0047  D8 C8				 fmul st(0), st(0)
+     66	    0049  DE C1				 faddp st(1), st(0)
+     67	    004B  D9 06	0044r			 fld value
+     68	    004F  DE C1				 faddp st(1), st(0)
+     69						 ;fsin
+     70						 ;fmul st(0), st(0)
+     71	    0051  C3				 ret
+     72	    0052			 func	 endp
+     73
+     74	    0052			 draw_plot	 proc
+     75	    0052  A0 0043r			 mov al, color_plot
+     76	    0055  A2 0042r			 mov color_axis, al
+     77
+     78	    0058  DD 06	0000r			 fld	 min_x
+     79	    005C			 @1:
+     80	    005C  D9 C0				 fld	 st(0)
+     81	    005E  D9 C0				 fld	 st(0)
+     82	    0060  E8 001C			 call	 get_x
+     83	    0063  E8 FFDF			 call	 func
+     84	    0066  E8 0025			 call	 get_y
+     85	    0069  E8 003B			 call	 draw_point
+     86	    006C  DD 06	0038r			 fld	 step
+     87	    0070  DE C1				 faddp	 st(1),	st(0)
+     88	    0072  DC 16	0008r			 fcom	 max_x
+     89	    0076  9B DF	E0			 fstsw	 ax
+     90	    0079  9E				 sahf
+     91	    007A  76 E0				 jna	 @1
+     92	    007C  DD C0				 ffree	 st(0)
+     93	    007E  C3				 ret
+     94	    007F			 draw_plot	 endp
+     95
+     96	    007F			 get_x	 proc
+     97	    007F  DC 26	0000r			 fsub	 min_x
+     98	    0083  DC 36	0014r			 fdiv	 scale_x
+     99	    0087  D9 FC				 frndint
+    100	    0089  DF 1E	0012r			 fistp	 crt_x
+    101	    008D  C3				 ret
+    102	    008E			 get_x	 endp
+    103
+    104	    008E			 get_y	 proc
+    105	    008E  DC 26	001Cr			 fsub	 min_y
+    106	    0092  DC 36	0030r			 fdiv	 scale_y
+    107	    0096  D9 FC				 frndint
+    108	    0098  DF 1E	002Er			 fistp	 crt_y
+    109	    009C  A1 002Cr			 mov	 ax, max_crt_y
+    110	    009F  2B 06	002Er			 sub	 ax, crt_y
+    111	    00A3  A3 002Er			 mov	 crt_y,	ax
+    112	    00A6  C3				 ret
+    113	    00A7			 get_y	 endp
+    114
+Turbo Assembler	 Version 2.02	     06/13/16 15:45:19	    Page 3
+lab8.ASM
+
+
+
+    115	    00A7			 draw_point	 proc
+    116	    00A7  B8 A000			 mov	 ax, 0A000h
+    117	    00AA  8E C0				 mov	 es, ax
+    118	    00AC  8B 36	002Er			 mov	 si, crt_y
+    119	    00B0  8B 3E	0012r			 mov	 di, crt_x
+    120	    00B4  3B 36	002Cr			 cmp	 si, max_crt_y
+    121	    00B8  73 19	90 90			 jae	 @nd1
+    122	    00BC  3B 3E	0010r			 cmp	 di, max_crt_x
+    123	    00C0  73 11	90 90			 jae	 @nd1
+    124	    00C4  A1 0010r			 mov	 ax, max_crt_x
+    125	    00C7  F7 E6				 mul	 si
+    126	    00C9  03 C7				 add	 ax, di
+    127	    00CB  8B D8				 mov	 bx, ax
+    128	    00CD  A0 0042r			 mov al	, color_axis
+    129	    00D0  26: 88 07			 mov	 byte ptr es:[bx], al
+    130	    00D3			 @nd1:
+    131	    00D3  C3				 ret
+    132	    00D4			 draw_point	 endp
+    133
+    134	    00D4			 draw_axis	 proc
+    135	    00D4  D9 EE				 fldz
+    136	    00D6  E8 FFB5			 call	 get_y
+    137	    00D9  C7 06	0012r 0000		 mov	 crt_x,	0
+    138	    00DF  8B 0E	0010r			 mov	 cx, max_crt_x
+    139	    00E3			 @x_c:
+    140	    00E3  E8 FFC1			 call	 draw_point
+    141	    00E6  FF 06	0012r			 inc	 crt_x
+    142	    00EA  E2 F7				 loop	 @x_c
+    143
+    144	    00EC  DD 06	0008r			 fld	 max_x
+    145	    00F0  DC 26	0000r			 fsub	 min_x
+    146	    00F4  D9 FC				 frndint
+    147	    00F6  DF 1E	0040r			 fistp	 tmp
+    148	    00FA  8B 0E	0040r			 mov	 cx, tmp
+    149
+    150	    00FE  DD 06	0000r			 fld	 min_x
+    151	    0102  D9 FC				 frndint
+    152	    0104  FF 0E	002Er			 dec	 crt_y
+    153	    0108			 @lx:
+    154	    0108  D9 C0				 fld	 st(0)
+    155	    010A  E8 FF72			 call	 get_x
+    156	    010D  E8 FF97			 call	 draw_point
+    157
+    158	    0110  D9 E8				 fld1
+    159	    0112  DE C1				 faddp	 st(1),	st(0)
+    160	    0114  E2 F2				 loop	 @lx
+    161	    0116  DD C0				 ffree	 st(0)
+    162
+    163	    0118  D9 EE				 fldz
+    164	    011A  E8 FF62			 call	 get_x
+    165	    011D  C7 06	002Er 0000		 mov	 crt_y,	0
+    166	    0123  8B 0E	002Cr			 mov	 cx, max_crt_y
+    167	    0127			 @y_c:
+    168	    0127  E8 FF7D			 call	 draw_point
+    169	    012A  FF 06	002Er			 inc	 crt_y
+    170	    012E  E2 F7				 loop	 @y_c
+    171
+Turbo Assembler	 Version 2.02	     06/13/16 15:45:19	    Page 4
+lab8.ASM
+
+
+
+    172	    0130  DD 06	0024r			 fld	 max_y
+    173	    0134  DC 26	001Cr			 fsub	 min_y
+    174	    0138  D9 FC				 frndint
+    175	    013A  DF 1E	0040r			 fistp	 tmp
+    176	    013E  8B 0E	0040r			 mov	 cx, tmp
+    177
+    178	    0142  DD 06	001Cr			 fld	 min_y
+    179	    0146  D9 FC				 frndint
+    180	    0148  FF 0E	0012r			 dec	 crt_x
+    181	    014C			 @ly:
+    182	    014C  DD D1				 fst	 st(1)
+    183	    014E  E8 FF3D			 call	 get_y
+    184	    0151  E8 FF53			 call	 draw_point
+    185
+    186	    0154  D9 E8				 fld1
+    187	    0156  DE C1				 faddp	 st(1),	st(0)
+    188	    0158  DC 16	0024r			 fcom	 max_y
+    189	    015C  E2 EE				 loop	 @ly
+    190	    015E  DD C0				 ffree	 st(0)
+    191	    0160  C3				 ret
+    192	    0161			 draw_axis	 endp
+    193
+    194	    0161			 _code	 ends
+    195						 end	 @main
+Turbo Assembler	 Version 2.02	     06/13/16 15:45:19	    Page 5
+Symbol Table
+
+
+
+
+Symbol Name		Type   Value			   Cref	(defined at #)
+
+??DATE			Text   "06/13/16"
+??FILENAME		Text   "lab8	"
+??TIME			Text   "15:45:19"
+??VERSION		Number 0202
+@1			Near   _CODE:005C		   #79	91
+@CPU			Text   0D0FH			   #1
+@CURSEG			Text   _CODE			   #10	#30
+@FILENAME		Text   LAB8
+@LX			Near   _CODE:0108		   #153	 160
+@LY			Near   _CODE:014C		   #181	 189
+@MAIN			Near   _CODE:0000		   #32	195
+@ND1			Near   _CODE:00D3		   121	123  #130
+@WORDSIZE		Text   2			   #1  #10  #30
+@X_C			Near   _CODE:00E3		   #139	 142
+@Y_C			Near   _CODE:0127		   #167	 170
+COLOR_AXIS		Byte   _DATA:0042		   #25	76  128
+COLOR_PLOT		Byte   _DATA:0043		   #26	75
+CRT_X			Word   _DATA:0012		   #14	100  119  137  141  180
+CRT_Y			Word   _DATA:002E		   #20	108  110  111  118  152	 165  169
+DRAW_AXIS		Near   _CODE:00D4		   53  #134
+DRAW_PLOT		Near   _CODE:0052		   54  #74
+DRAW_POINT		Near   _CODE:00A7		   85  #115  140  156  168  184
+FUNC			Near   _CODE:0045		   #63	83
+GET_X			Near   _CODE:007F		   82  #96  155	 164
+GET_Y			Near   _CODE:008E		   84  #104  136  183
+MAX_CRT_X		Word   _DATA:0010		   #13	43  122	 124  138
+MAX_CRT_Y		Word   _DATA:002C		   #19	49  109	 120  166
+MAX_X			Qword  _DATA:0008		   #12	41  88	144
+MAX_Y			Qword  _DATA:0024		   #18	47  172	 188
+MIN_X			Qword  _DATA:0000		   #11	42  78	97  145	 150
+MIN_Y			Qword  _DATA:001C		   #17	48  105	 173  178
+SCALE_X			Qword  _DATA:0014		   #15	45  98
+SCALE_Y			Qword  _DATA:0030		   #21	51  106
+STEP			Qword  _DATA:0038		   #23	86
+TMP			Word   _DATA:0040		   #24	147  148  175  176
+VALUE			Dword  _DATA:0044		   #27	67
+
+Macro Name						   Cref	(defined at #)
+
+SCALE							   #2  40  46
+
+Groups & Segments	Bit Size Align	Combine	Class	   Cref	(defined at #)
+
+_CODE			16  0161 Para	none		   #30	31
+_DATA			16  0048 Para	none		   #10	31  33
+

@@ -1,0 +1,36 @@
+Microsoft (R) Macro Assembler Version 5.00                  6/20/16 20:01:10
+                                                             Page     1-1
+
+
+				.386 
+ 0000				code segment 
+ 0000  A1 00000000 R			mov eax, [$] 
+test.ASM(3): warning A4057: Illegal size for operand
+				 
+ 0005				code ends 
+				end 
+Microsoft (R) Macro Assembler Version 5.00                  6/20/16 20:01:10
+                                                             Symbols-1
+
+
+
+
+                N a m e         	Size	Length	 Align	Combine Class
+
+CODE . . . . . . . . . . . . . .  	32 Bit	0005	PARA	NONE	
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+@FILENAME  . . . . . . . . . . .  	TEXT  test		
+
+
+      6 Source  Lines
+      6 Total   Lines
+      3 Symbols
+
+  51180 + 465364 Bytes symbol space free
+
+      1 Warning Errors
+      0 Severe  Errors
