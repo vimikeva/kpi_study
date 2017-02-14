@@ -1,0 +1,7 @@
+﻿  source.cpp
+d:\study\kpi\kg\lab_2\lab_2\source.cpp(32): warning C4018: <: несоответствие типов со знаком и без знака
+d:\study\kpi\kg\lab_2\lab_2\source.cpp(34): warning C4018: <: несоответствие типов со знаком и без знака
+d:\study\kpi\kg\lab_2\lab_2\source.cpp(43): warning C4018: <: несоответствие типов со знаком и без знака
+d:\study\kpi\kg\lab_2\lab_2\source.cpp(45): warning C4018: <: несоответствие типов со знаком и без знака
+d:\study\kpi\kg\lab_2\lab_2\source.cpp(132): warning C4018: <: несоответствие типов со знаком и без знака
+  lab_2.vcxproj -> D:\Study\KPI\KG\lab_2\Debug\lab_2.exe
