@@ -22,6 +22,7 @@
                         ; ... ... ...
                         ))
 
+
 (defparameter *likelihood* 30)
 
 
@@ -57,10 +58,15 @@
           (setf (car (nth num-proc *processors*))
                 (- task-tact (second (nth num-proc *processors*))))))) )
 
+(defparameter *count-operations* 0)
+(defparameter *max-count-operations* 0)
 
 (defun print-processors ()
   (dolist (proc *processors*)
-            (format t "  ~A" (car proc)))
+    (incf *max-count-operations*)
+    (unless (= 0 (car proc))
+      (incf *count-operations*))
+    (format t "  ~A" (car proc)))
   (format t "~%"))
 
 
@@ -192,12 +198,19 @@
       ((string= count "3")
        (proc-task :task))
       ((string= count "4")
+       (setf *count-operations* 0)
+       (setf *max-count-operations* 0)
        (mapcar (lambda (elem)
                  (format t "  ~A" elem))
                (loop for i from 0 to (1- (length *processors*))
                      collect i))
        (format t "~%")
-       (task-manager))
+       (task-manager)
+       (format t "~%count-op: ~A~%max-count-op: ~A~%KPD: ~3$%~%"
+               *count-operations*
+               *max-count-operations*
+               (/ *count-operations* *max-count-operations* 0.01))
+       (read-char))
       ((string/= count "0")
        (format t "Error!~%")))
     (unless (string= count "0")

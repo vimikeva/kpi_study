@@ -12,12 +12,16 @@
 |#
 
 (defpackage :lexer
-  (:use :common-lisp))
+  (:use :cl :asdf))
 
 (in-package :lexer)
 
 (defparameter *col* 0)
 (defparameter *row* 1)
+
+(defparameter *shift-keywords* 300)
+(defparameter *shift-const* 800)
+(defparameter *shift-id* 2000)
 
 (defparameter *keywords* '("PROGRAM" "PROCEDURE" "BEGIN" "END" "CONST" "VAR"
                            "COMPLEX" "INTEGER" "FLOAT" "BLOGFLOAT" "EXT"
@@ -38,6 +42,11 @@
 (defparameter *constants* (make-hash-table))
 
 
+
+(defun aref-ascii (code)
+  (if (< code 256)
+      (aref *ascii-code-table* code)
+      6))
 
 
 (defun initialization-tables ()
@@ -69,18 +78,18 @@
     (setf (aref *ascii-code-table* (char-code i)) 3))
 
   (dolist (i (second *delimiters*))
-    (setf (aref *ascii-code-table* (char-code (char i 0))) 4))
+    (setf (aref *ascii-code-table* (char-code (char i 0))) 3))
 
-  (setf (aref *ascii-code-table* (char-code #\()) 5)
+  (setf (aref *ascii-code-table* (char-code #\()) 3)
   (setf (aref *ascii-code-table* (char-code #\Sub)) 7) ;eof
 
   ;; init *keyword-and-alocd-table*
   (dolist (elem *keywords*)
-    (setf (gethash (hash-table-count *keyword-and-alocd-table*)
+    (setf (gethash (+ *shift-keywords* (hash-table-count *keyword-and-alocd-table*))
                    *keyword-and-alocd-table*) elem))
   
   (dolist (elem (cadr *delimiters*))
-    (setf (gethash (hash-table-count *keyword-and-alocd-table*)
+    (setf (gethash (+ *shift-keywords* (hash-table-count *keyword-and-alocd-table*))
                    *keyword-and-alocd-table*) elem)) )
 
 
@@ -102,7 +111,7 @@
                (setq token key)))
            *constants*)
   (unless token
-    (setf token (hash-table-count *constants*))
+    (setf token (+ *shift-const* (hash-table-count *constants*)))
     (setf (gethash token *constants*) const))
   `(,pos (,token ,const)))
 
@@ -117,7 +126,7 @@
                (setq token key)))
            *identifiers*)
   (unless token
-    (setf token (hash-table-count *identifiers*))
+    (setf token (+ *shift-id* (hash-table-count *identifiers*)))
     (setf (gethash token *identifiers*) id))
   `(,pos (,token ,id)))
 
@@ -128,7 +137,7 @@
 
 (defun whitespace-token (stream token-list)
   (let ((sym (scan stream)))
-    (if (eql 0 (aref *ascii-code-table* (char-code sym)))
+    (if (eql 0 (aref-ascii (char-code sym)))
         (whitespace-token stream token-list)
         (qualifier stream sym token-list))))
 
@@ -146,9 +155,9 @@
 
 
 (defun separator-token (stream syms pos token-list)
+  (push (scan stream) syms)
   (let ((str-token (concatenate 'string (reverse syms)))
         token)
-    (push (scan stream) syms)
     (maphash (lambda (key val)
                (when (string-equal val str-token)
                  (setq token key)))
@@ -166,26 +175,25 @@
        (character-token stream syms pos token-list))
       (t
        (qualifier stream (car syms)
-                  (cons `(,pos (,(char-code (second syms)))) token-list))))))
+                  (cons `(,pos (,(char-code (second syms))
+                                ,(second syms)))
+                        token-list))))))
 
 
 (defun digit-token (stream syms pos token-list)
   (let ((sym-next (scan stream)))
-    (if (eql 1 (aref *ascii-code-table* (char-code sym-next)))
+    (if (eql 1 (aref-ascii (char-code sym-next)))
         (digit-token stream (cons sym-next syms) pos token-list)
-        (progn 
-          (unless (eql 0 (aref *ascii-code-table* (char-code sym-next)))
-            (push (error-token-back sym-next pos) token-list))
-          (qualifier stream
-                     (scan stream)
-                     (cons (const-token-back (concatenate 'string
+        (qualifier stream
+                   sym-next
+                   (cons (const-token-back (concatenate 'string
                                                           (reverse syms))
                                              pos)
-                           token-list))))))
+                           token-list)))))
 
 (defun character-token (stream syms pos token-list)
   (let ((sym-next (scan stream)))
-    (if (member (aref *ascii-code-table* (char-code sym-next)) '(1 2))
+    (if (member (aref-ascii (char-code sym-next)) '(1 2))
         (character-token stream (cons sym-next syms) pos token-list)
         (qualifier stream
                    sym-next
@@ -196,7 +204,7 @@
 
 
 (defun qualifier (stream sym token-list)
-  (let ((symb (aref *ascii-code-table* (char-code sym))))
+  (let ((symb (aref-ascii (char-code sym))))
     (cond
       ((eql 0 symb)
        (whitespace-token stream token-list))
@@ -209,13 +217,11 @@
       ((eql 3 symb)
        (separator-token stream (list sym)
                         (list *row* *col*) token-list))
-      ((eql 4 symb)
-       (separator-token stream (list sym)
-                        (list *row* *col*) token-list))
       ((eql 6 symb)
        (qualifier stream
                   (scan stream)
-                  (error-token-back sym (list *row* *col*))))
+                  (cons (error-token-back sym (list *row* *col*))
+                        token-list)))
       ((eql 7 symb)
        (reverse token-list)))))
 
@@ -226,4 +232,22 @@
     (qualifier stream (scan stream) nil)))
 
 
-(print (lexer "/media/vimikeva/MediaWin/Study/kpi_study/ipz1-opt/test.1"))
+(defun print-lexems (token-list &optional (stream t))
+  (labels ((%print (token-list)
+             (when token-list
+               (destructuring-bind ((row col) (token str)) (car token-list)
+                 (format stream "~A:~A   " row col)
+                 (format stream "~A:  \"~A\"~%" token str))
+               (%print (cdr token-list)))))
+    
+    (format stream "token list:~%")
+    (%print token-list)))
+    
+
+(with-open-file (stream "res.test.1"
+                        :direction :output
+                        :if-exists :supersede)
+  (print-lexems (lexer "tests/test.1") stream))
+
+(print-lexems (lexer "tests/test.1"))
+

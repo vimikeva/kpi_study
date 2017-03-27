@@ -1,6 +1,7 @@
 <signal-program> --> <program>
 <program> --> PROGRAM <procedure-identifier> ; <block>. |
-              PROCEDURE <procedure-identifier> <parameters-list> ; <block> ; <block> --> <declarations> BEGIN <statements-list> END
+              PROCEDURE <procedure-identifier> <parameters-list> ; <block> ;
+<block> --> <declarations> BEGIN <statements-list> END
 <declarations> --> <constant-declarations>
                    <variable-declarations>
                    <math-function-declarations>
@@ -14,12 +15,12 @@
 <variable-declarations> --> VAR <declarations-list> | <empty>
 <declarations-list> --> <declaration> <declarations-list> | <empty>
 <declaration> --> <variable-identifier> <identifiers-list> : <attribute> <attributes-list> ;
-                  <identifiers-list> --> , <variable-identifier> <identifiers-list> | <empty>
+<identifiers-list> --> , <variable-identifier> <identifiers-list> | <empty>
 <attributes-list> --> <attribute> <attributes-list> | <empty>
 <attribute> --> COMPLEX | INTEGER | FLOAT | BLOCKFLOAT | EXT
-<math-function-declaration> --> DEFFUNC <function-list> | <empty>
+<math-function-declarations> --> DEFFUNC <function-list> | <empty>
 <function-list> --> <function><function-list> | <empty>
-<function> --> <function-identifier> = <expression><function-characteristic> ;
+<function> --> <function-identifier> = <expression> <function-characteristic> ;
 <function-characteristic> --> \ <unsigned-integer>,<unsigned-integer>
 <procedure-declarations> --> <procedure> <procedure-declarations> | <empty>
 <procedure> --> PROCEDURE <procedure-identifier> <parameters-list> ;
@@ -31,7 +32,7 @@
                 WHILE <conditional-expression> DO <statements-list> ENDWHILE ; |
                 LOOP <statements-list> ENDLOOP ; |
                 FOR <variable-identifier> := <loop-declaration> ENDFOR ; |
-                CASE <expression> OF <alternatives-mj list> ENDCASE ; |
+                CASE <expression> OF <alternatives-list> ENDCASE ; |
                 RETURN ; |
                 ; |
                 ($ <assembly-insert-file-identifier> $)
@@ -46,8 +47,8 @@
 <conditional-expression> --> <logical-summand> <logical>
 <logical> --> OR <logical-summand> <logical> | <empty>
 <logical-summand> --> <logical-multiplier> <logical-multipliers-list>
-<logical-multipliers-list> --> AND <logical-multiplier><logical-multipliers-list> | <empty>
-<logical-multiplier> --> <expression> <comparison-operator><expression> | [ <conditional-expression> ] | NOT <logical-multiplier>
+<logical-multipliers-list> --> AND <logical-multiplier> <logical-multipliers-list> | <empty>
+<logical-multiplier> --> <expression> <comparison-operator> <expression> | [ <conditional-expression> ] | NOT <logical-multiplier>
 <comparison-operator> --> < | <= | = | <> | >= | >
 <expression> --> <summand> <summands-list> |
                  - <summand> <summands-list>

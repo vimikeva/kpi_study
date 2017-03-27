@@ -1,0 +1,53 @@
+html, body {
+    margin:0;
+    padding:0
+}
+
+body {
+    font: 76% arial,sans-serif;
+    text-align:center
+}
+
+#container {
+    text-align: left;
+    weight:1000px;
+    margin:0 auto;
+}
+
+#nav {
+    background:#B9CAFF;
+    weight:200px;
+    min-height:1000px;
+    float:left;
+}
+
+#right-side {
+    background:#B9CAFF;
+    float:left;
+}
+
+#header {
+    height:150px;
+    
+}
+
+#container {
+    width:850px;
+    height:auto;
+}
+
+#sidebar {
+    background:#FF8539;
+    height:100px;
+}
+
+#footer {
+    background: #333;
+    color: #FFF;
+    height: 50px;
+}
+
+#logo {
+    margin:0px 20px 20px;
+    
+}

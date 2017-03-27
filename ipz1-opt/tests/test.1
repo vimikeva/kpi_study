@@ -1,0 +1,44 @@
+program pr;
+
+procedure pr1 (var1, var2, var3 : integer complex float);
+const x = 1;
+      c2 = '23, $exp(-1+6)';
+      c3 = - 10#-12;
+var v1 : integer;
+defun fn1 = 23 \ 123,42;
+procedure pr2 (vr2 : ext);
+
+(**********************
+********main***********
+***********************)
+begin
+  v1 := 23;
+  
+  pr1(13,13,13);
+
+  if v1 > 3 then
+    v1:=3;
+  else
+    v1:=4;
+  endif;
+
+  while x <> 3 and x > 10 or x > 10 do
+    x := x + 1;
+  endwhile;
+
+  loop
+    v1 := 4 - v1;
+  endloop;
+
+  for i := 4 to 10 do
+    v1 := i + v1;
+  endfor;
+
+  case v1 of
+    x : / v1 := 4;\
+    3 : / v1 := 5;\
+  endcase;
+  
+  ($ th.asm $) 
+
+end.
