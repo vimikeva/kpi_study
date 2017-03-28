@@ -1,0 +1,157 @@
+html, body {
+    margin:0px;
+    padding:0px;
+}
+
+body {
+    font: 76% arial,sans-serif;
+    text-align:center;
+}
+
+#container {
+    text-align: left;
+    weight:1150px;
+    margin:0 auto;
+}
+
+#nav {
+    background:#DDFFAA;
+    weight:200px;
+    min-height:620px;
+    float:left;
+    margin: 20px 10px 10px;
+    position: fixed;
+    
+}
+
+#right-side {
+    background: black;
+    float:left;
+    margin-left: 140px;
+}
+
+#header {
+    height:100px;
+}
+
+#container {
+    width:1000px;
+    height:200px;
+}
+
+#content {
+    background: #DDFFAA;
+    min-height: 200px;
+}
+
+#sidebar {
+    text-align: center;
+    background:white;
+    height:100px;
+}
+
+#footer {
+    background: white;
+    height: 50px;
+    text-align: center;
+}
+
+#logo {
+    margin: 20px 10px 10px;
+    text-align: center;
+}
+
+#img-logo {
+    height:70px;
+}
+
+#img-sidebar {
+    height:100px;
+}
+
+#footer img {
+    height:50px;
+}
+
+#nav ul {
+    margin: 0 auto;
+    font-size: medium;
+    padding: 3px 0 0 0;
+    text-align: center;
+}
+
+ul li {
+    list-style-type: none;
+    margin: 0;
+    padding: 4px 0;
+}
+
+#nav ul li a {
+    padding: 0 20px;
+    line-height: 40px;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#nav ul li a:hover, #nav ul li a.active {
+    color: red;
+}
+
+#news {
+    margin: 0px 30px;
+    text-align: center;
+
+}
+
+#news img {
+    height: 300px;
+}
+
+#news h1 {
+    color:blue;
+}
+
+#venue {
+    text-align:center;
+}
+
+#news div, #venue tr, #venue img, #artists div {
+    background: lightgreen;
+    margin: 10px 0px 0px;
+    padding: 15px 15px 15px;
+}
+
+table {
+    width: 600px;
+    border: 0px;
+    margin: auto;
+}
+
+#venue img {
+    height: 200px;
+    float: left;
+}
+
+#venue div div {
+    margin-left: 20px;
+}
+
+#main {
+    text-align: center;
+    margin: 0px 20px -13px;
+    font-family: 'Times';
+    font-size: medium;
+}
+
+#main img {
+    height: 400px;
+}
+
+#artists {
+    text-align:center;
+}
+
+#artists img {
+    height: 600px;
+}
