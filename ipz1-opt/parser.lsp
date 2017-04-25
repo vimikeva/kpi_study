@@ -34,7 +34,6 @@
              :position (car token)
              :name-node 'error))
 
-x
 (defun keyword-rule (token)
   (make-rule :token (car (second token))
              :node (second (second token))
@@ -120,7 +119,7 @@ x
                (list tree-1 tree-2 tree-3 tree-4 tree-5 tree-6)
                tokens)))
     (t (error-rule (car tokens)))))
-    
+
 
 (defun signal-program (tokens)
   (program tokens))
