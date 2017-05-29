@@ -142,3 +142,4 @@ comp_system/*.fals
 comp_system/lab_2.fasl
 func_prog/lab_7.fasl
 ipz1-opt/lexer.fasl
+sda/

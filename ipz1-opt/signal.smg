@@ -8,7 +8,7 @@
                    <procedure-declarations>
 <constant-declarations> --> CONST <constant-declarations-list> | <empty>
 <constant-declarations-list> --> <constant-declaration> <constant-declarations-list> | <empty>
-<constant-declaration> --> <constant-identifier> = <constant>;
+<constant-declaration> --> <constant-identifier> = <constant> ;
 <constant> --> <complex-constant> |
                <unsigned-constant> | 
                - <unsigned-constant>
@@ -19,7 +19,7 @@
 <attributes-list> --> <attribute> <attributes-list> | <empty>
 <attribute> --> COMPLEX | INTEGER | FLOAT | BLOCKFLOAT | EXT
 <math-function-declarations> --> DEFFUNC <function-list> | <empty>
-<function-list> --> <function><function-list> | <empty>
+<function-list> --> <function> <function-list> | <empty>
 <function> --> <function-identifier> = <expression> <function-characteristic> ;
 <function-characteristic> --> \ <unsigned-integer>,<unsigned-integer>
 <procedure-declarations> --> <procedure> <procedure-declarations> | <empty>
@@ -40,7 +40,7 @@
 <incomplete-condition-statement> --> IF <conditional-expression> THEN <statements-list>
 <alternative-part> --> ELSE <statements-list> | <empty>
 <loop-declaration> --> <expression> TO <expression> DO <statements-list>
-<actual-arguments> --> (<expression><actual-arguments-list>) | <empty>
+<actual-arguments> --> ( <expression> <actual-arguments-list> ) | <empty>
 <actual-arguments-list> --> ,<expression> <actual-arguments-list> | <empty>
 <alternatives-list> --> <alternative> <alternatives-list> | <empty>
 <alternative> --> <expression> : / <statements-list> \
@@ -54,7 +54,7 @@
                  - <summand> <summands-list>
 <summands-list> --> <add-instruction> <summand> <summands-list> | <empty>
 <add-instruction> --> + | - | !
-<summand> --> <multiplier><multipliers-list>
+<summand> --> <multiplier> <multipliers-list>
 <multipliers-list> --> <multiplication-instruction> <multiplier> <multipliers-list> | <empty>
 <multiplication-instruction> --> * | / | & | MOD
 <multiplier> --> <unsigned-constant> |
@@ -62,14 +62,14 @@
                  <constant-identifier> |
                  <variable> |
                  <function-identifier> |
-                 <builtin-function-identifier><actual-arguments> |
+                 <builtin-function-identifier> <actual-arguments> |
                  ( <expression> ) |
                  - <multiplier> |
                  ^ <multiplier>
-<variable> --> <variable-identifier><dimension> | <complex-variable>
+<variable> --> <variable-identifier> <dimension> | <complex-variable>
 <complex-variable> --> "<complex-number>"
-<dimension>--> [<expression><expressions-list>] | <empty>
-<expressions-list> --> ,<expression><expressions-list> | <empty>
+<dimension> --> [ <expression> <expressions-list> ] | <empty>
+<expressions-list> --> ,<expression> <expressions-list> | <empty>
 <complex-constant> --> '<complex-number>'
 <unsigned-constant> --> <unsigned-number>
 <complex-number> --> <left-part> <right-part>
@@ -88,7 +88,7 @@
              <empty>
 <unsigned-number> --> <integer-part> <fractional-part>
 <integer-part> --> <unsigned-integer>
-<fractional-part> --> #<sign><unsigned-integer> | <empty>
+<fractional-part> --> # <sign> <unsigned-integer> | <empty>
 <unsigned-integer> --> <digit><digits-string>
 <digits-string> --> <digit><digits-string> | <empty>
 <sign> --> + | - | <empty>

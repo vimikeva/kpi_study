@@ -1,5 +1,6 @@
 (defsystem #'signal
   :components ((:file "lexer")
+               (:file "parser")
                (:file "run-tests-lexer"
                 :depend-op "lexer")))
   

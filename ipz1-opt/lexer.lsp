@@ -1,4 +1,4 @@
-;; grammar signal [7]
+3;; grammar signal [7]
 
 #| 
 0 - whitespace
@@ -30,7 +30,7 @@
                            "IF" "THEN" "ELSE" "TO" "DO" "OR" "AND" "NOT" "MOD"
                            "$EXP"))
 
-(defparameter *delimiters* '(";.,-+*/\:()[]<>=!&^\"'#"
+(defparameter *delimiters* '(";.,-+*/\:()[]<>=!&^\"'#\\"
                              (":=" "($" "$)" "<=" "<>" ">=")))
 
 (defparameter *comment-chars* '("(*" "*)"))
@@ -90,7 +90,10 @@
   
   (dolist (elem (cadr *delimiters*))
     (setf (gethash (+ *shift-keywords* (hash-table-count *keyword-and-alocd-table*))
-                   *keyword-and-alocd-table*) elem)) )
+                   *keyword-and-alocd-table*) elem))
+  (setf (gethash (+ *shift-keywords* (hash-table-count *keyword-and-alocd-table*))
+                 *keyword-and-alocd-table*) "ENDIF")
+  )
 
 
 (defun scan (stream)
@@ -164,9 +167,9 @@
              *keyword-and-alocd-table*)
     (cond
       (token
-       (qualifier stream (scan stream)
-                  (cons `(,pos (,token ,str-token))
-                        token-list)))
+           (qualifier stream (scan stream)
+                      (cons `(,pos (,token ,str-token))
+                            token-list)))
       ((string-equal (car *comment-chars*) str-token)
        (qualifier stream
                   (comment-delete stream (scan stream))
@@ -244,10 +247,10 @@
     (%print token-list)))
     
 
-(with-open-file (stream "res.test.1"
-                        :direction :output
-                        :if-exists :supersede)
-  (print-lexems (lexer "tests/test.1") stream))
+;; (with-open-file (stream "res.test.1"
+;;                         :direction :output
+;;                         :if-exists :supersede)
+;;   (print-lexems (lexer "tests/test.1") stream))
 
-(print-lexems (lexer "tests/test.1"))
+;; (print-lexems (lexer "tests/test.1"))
 
