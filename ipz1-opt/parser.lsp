@@ -21,7 +21,8 @@
                                   ,(%. (cdr rule-simple) (cdr name-simple) (1+ num) tree))
                                 (make-rule :name-node ,rule-name
                                            :children (list ,@(mapcar 'intern (reverse (cdr tree)))
-                                                           (error-rule (car tokens)))) )
+                                                           ;; (error-rule (car tokens))
+                                                           )) )
                            `(multiple-value-bind (,(intern (car tree)) tokens)
                                 (,(car rule-simple) tokens)
                               ,(%. (cdr rule-simple) (cdr name-simple) (1+ num) tree)) )
@@ -468,5 +469,5 @@
 (defun parser ()
   (print-tree
    (signal-program-rule
-    (lexer::lexer "tests/test.1")))
+    (lexer::lexer "tests/test.2")))
   nil)

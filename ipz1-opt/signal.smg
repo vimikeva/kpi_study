@@ -48,10 +48,9 @@
 <logical> --> OR <logical-summand> <logical> | <empty>
 <logical-summand> --> <logical-multiplier> <logical-multipliers-list>
 <logical-multipliers-list> --> AND <logical-multiplier> <logical-multipliers-list> | <empty>
-<logical-multiplier> --> <expression> <comparison-operator> <expression> | [ <conditional-expression> ] | NOT <logical-multiplier>
+<logical-multiplier> --> [ <conditional-expression> ] | NOT <logical-multiplier> | <expression> <comparison-operator> <expression>
 <comparison-operator> --> < | <= | = | <> | >= | >
-<expression> --> <summand> <summands-list> |
-                 - <summand> <summands-list>
+<expression> --> - <summand> <summands-list> | <summand> <summands-list>
 <summands-list> --> <add-instruction> <summand> <summands-list> | <empty>
 <add-instruction> --> + | - | !
 <summand> --> <multiplier> <multipliers-list>
@@ -83,7 +82,6 @@
 <assembly-insert-file-identifier> --> <identifier>
 <identifier> --> <letter><string>
 <string> --> <letter><string> |
-    
              <digit><string> |
              <empty>
 <unsigned-number> --> <integer-part> <fractional-part>
